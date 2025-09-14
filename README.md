@@ -1,8 +1,4 @@
 
-  # Dark-Themed Web UI Design
-
-  This is a code bundle for Dark-Themed Web UI Design. The original project is available at https://www.figma.com/design/MkP0e0LKuDLAkRdkMR6Vul/Dark-Themed-Web-UI-Design.
-
   ## Running the code
 
   Run `npm i` to install the dependencies.
