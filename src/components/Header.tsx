@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Shield, Menu, X, User, Settings, LogOut } from 'lucide-react';
 import { AuthModal } from './AuthModal';
@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import AuthService from '../services/authService';
 
 interface HeaderProps {
   onNavigate: (section: string) => void;
@@ -22,12 +23,20 @@ export function Header({ onNavigate, currentSection, isAuthenticated, onAuth }: 
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Check authentication status on component mount
+  useEffect(() => {
+    const authService = AuthService.getInstance();
+    onAuth(authService.isAuthenticated());
+  }, [onAuth]);
+
   const handleAuthSuccess = () => {
     onAuth(true);
     setShowAuthModal(false);
   };
 
   const handleLogout = () => {
+    const authService = AuthService.getInstance();
+    authService.logout();
     onAuth(false);
   };
 

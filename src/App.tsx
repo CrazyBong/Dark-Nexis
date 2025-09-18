@@ -7,6 +7,7 @@ import { PricingSection } from './components/PricingSection';
 import { AnalysisStage } from './components/AnalysisStage';
 import { ResultsStage } from './components/ResultsStage';
 import { AccountDashboard } from './components/AccountDashboard';
+import { ConnectionTest } from './components/ConnectionTest';
 
 type AppStage = 'upload' | 'analysis' | 'results';
 type AppSection = 'home' | 'how-it-works' | 'pricing' | 'account';
@@ -25,7 +26,7 @@ interface AnalysisResults {
   heatmapData: Array<{ x: number; y: number; intensity: number }>;
 }
 
-export default function App() {
+function App() {
   const [currentStage, setCurrentStage] = useState<AppStage>('upload');
   const [currentSection, setCurrentSection] = useState<AppSection>('home');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -136,7 +137,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground dark">
+    <div className="min-h-screen bg-background">
       {/* Toaster for notifications */}
       <Toaster 
         position="top-right"
@@ -162,6 +163,11 @@ export default function App() {
         {renderMainContent()}
       </main>
 
+      {/* Add connection test component for debugging */}
+      <div className="container mx-auto p-4">
+        <ConnectionTest />
+      </div>
+      
       {/* Footer */}
       {(currentSection === 'home' || currentSection === 'how-it-works' || currentSection === 'pricing') && currentStage === 'upload' && (
         <footer className="bg-card/30 backdrop-blur-sm border-t border-border py-12">
@@ -213,3 +219,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;

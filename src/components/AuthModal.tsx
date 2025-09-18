@@ -5,7 +5,8 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Separator } from './ui/separator';
 import { ArrowLeft, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
+import AuthService from '../services/authService';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -40,28 +41,53 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      if (currentView === 'forgot-password') {
+    try {
+      if (currentView === 'signin') {
+        const authService = AuthService.getInstance();
+        const success = await authService.login({
+          username: formData.email,
+          password: formData.password
+        });
+        
+        if (success) {
+          toast.success('Signed in successfully!');
+          onAuthSuccess();
+          handleClose();
+        } else {
+          toast.error('Invalid email or password');
+        }
+      } else if (currentView === 'forgot-password') {
+        // Handle password reset
         toast.success('Password reset link sent to your email!');
         setCurrentView('signin');
       } else {
-        toast.success(`${currentView === 'signin' ? 'Signed in' : 'Account created'} successfully!`);
+        // Handle signup - for now just show success
+        toast.success('Account created successfully!');
         onAuthSuccess();
         handleClose();
       }
-    }, 1500);
+    } catch (error) {
+      toast.error('An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOAuthLogin = (provider: 'google' | 'facebook') => {
     setIsLoading(true);
-    // Simulate OAuth flow
-    setTimeout(() => {
+    // For demo purposes, use the demo login
+    setTimeout(async () => {
+      const authService = AuthService.getInstance();
+      const success = await authService.demoLogin();
+      
       setIsLoading(false);
-      toast.success(`Signed in with ${provider} successfully!`);
-      onAuthSuccess();
-      handleClose();
+      if (success) {
+        toast.success(`Signed in with ${provider} successfully!`);
+        onAuthSuccess();
+        handleClose();
+      } else {
+        toast.error('OAuth login failed');
+      }
     }, 1000);
   };
 

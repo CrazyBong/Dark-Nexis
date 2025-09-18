@@ -15,6 +15,7 @@ import {
 import { Card } from './ui/card';
 import { Progress } from './ui/progress';
 import { Button } from './ui/button';
+import AuthService from '../services/authService';
 
 interface AnalysisStageProps {
   file: File;
@@ -86,80 +87,206 @@ export function AnalysisStage({ file, onAnalysisComplete, onBack }: AnalysisStag
   useEffect(() => {
     if (!isAnalyzing) return;
 
-    const stepDurations = [2000, 3000, 4000, 2000]; // Duration for each step in ms
-    let totalTime = 0;
+    // Check if backend is available first
+    let ws: WebSocket | null = null;
+    let fallbackTimer: NodeJS.Timeout;
+    let hasConnected = false;
+    let realAnalysisStarted = false;
 
-    const progressStep = (stepIndex: number) => {
-      if (stepIndex >= steps.length) {
-        setIsAnalyzing(false);
-        // Generate mock results
-        const mockResults = {
-          confidence: Math.random() * 30 + 70, // 70-100% confidence
-          isDeepfake: Math.random() > 0.7, // 30% chance of being deepfake
-          detectedTools: ['FaceSwap', 'DeepFaceLab'],
-          metadata: {
-            analysisTime: '2.3s',
-            modelVersion: 'v3.2.1',
-            fileSize: file.size,
-            resolution: fileType === 'image' ? '1920x1080' : undefined,
-            duration: fileType !== 'image' ? '00:00:45' : undefined,
+    // Try to start real analysis first
+    const tryRealAnalysis = async () => {
+      try {
+        const authService = AuthService.getInstance();
+        
+        // Try to trigger real analysis via API
+        const response = await authService.authenticatedFetch('/api/v1/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          heatmapData: generateMockHeatmap(),
-        };
-        setTimeout(() => onAnalysisComplete(mockResults), 1000);
+          body: JSON.stringify({ file_name: file.name }),
+        });
+        
+        if (response.ok) {
+          console.log('Real analysis started successfully');
+          realAnalysisStarted = true;
+          // Continue with WebSocket monitoring
+        } else {
+          console.log('Real analysis unavailable, using fallback');
+          startFallbackAnalysis();
+          return;
+        }
+      } catch (error) {
+        console.log('Backend unavailable, using fallback analysis');
+        startFallbackAnalysis();
         return;
       }
-
-      const stepDuration = stepDurations[stepIndex];
-      totalTime += stepDuration;
-
-      // Mark current step as active
-      setSteps(prev => prev.map((step, i) => ({
-        ...step,
-        status: i < stepIndex ? 'completed' : i === stepIndex ? 'active' : 'pending',
-      })));
-
-      setCurrentStepIndex(stepIndex);
-
-      // Animate step progress
-      let stepProgress = 0;
-      const stepInterval = setInterval(() => {
-        stepProgress += Math.random() * 8 + 2; // 2-10% per interval
-        if (stepProgress >= 100) {
-          stepProgress = 100;
-          clearInterval(stepInterval);
-          
-          // Mark step as completed
-          setSteps(prev => prev.map((step, i) => ({
-            ...step,
-            status: i <= stepIndex ? 'completed' : 'pending',
-            progress: i === stepIndex ? 100 : step.progress,
-          })));
-
-          // Move to next step
-          setTimeout(() => progressStep(stepIndex + 1), 500);
-        } else {
-          setSteps(prev => prev.map((step, i) => ({
-            ...step,
-            progress: i === stepIndex ? stepProgress : step.progress,
-          })));
-        }
-
-        // Update overall progress
-        const completedSteps = stepIndex;
-        const currentStepProgress = stepProgress / 100;
-        const newOverallProgress = ((completedSteps + currentStepProgress) / steps.length) * 100;
-        setOverallProgress(newOverallProgress);
-      }, 100);
     };
 
-    // Start analysis
-    setTimeout(() => progressStep(0), 500);
-  }, [isAnalyzing, file]);
+    // Try WebSocket connection for real-time updates
+    const connectWebSocket = () => {
+      try {
+        // Note: Backend authentication is not implemented yet, so this will fail
+        // Using a placeholder token - in production this should be a real JWT token
+        ws = new WebSocket(`ws://localhost:8000/ws/placeholder-token`);
+        
+        ws.onopen = () => {
+          console.log('WebSocket connected successfully');
+          hasConnected = true;
+          if (fallbackTimer) {
+            clearTimeout(fallbackTimer);
+          }
+        };
+        
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'analysis_update') {
+              setCurrentStepIndex(data.step || 0);
+              setOverallProgress(data.progress || 0);
+              
+              if (data.status === 'completed') {
+                setIsAnalyzing(false);
+                onAnalysisComplete(data.results);
+              }
+            }
+          } catch (error) {
+            console.error('Error parsing WebSocket message:', error);
+          }
+        };
 
-  const generateMockHeatmap = () => {
+        ws.onerror = (error) => {
+          console.warn('WebSocket connection failed, falling back to mock analysis:', error);
+          if (!hasConnected) {
+            startFallbackAnalysis();
+          }
+        };
+
+        ws.onclose = () => {
+          console.log('WebSocket connection closed');
+          if (!hasConnected) {
+            startFallbackAnalysis();
+          }
+        };
+      } catch (error) {
+        console.warn('Failed to create WebSocket connection:', error);
+        startFallbackAnalysis();
+      }
+    };
+
+    // Fallback to mock analysis if WebSocket fails
+    const startFallbackAnalysis = () => {
+      if (fallbackTimer) return; // Prevent multiple fallback timers
+      
+      console.log('Starting fallback mock analysis...');
+      const stepDurations = [2000, 3000, 4000, 2000]; // Duration for each step
+      let currentStep = 0;
+      
+      const processStep = () => {
+        if (currentStep >= steps.length) {
+          // Analysis complete - check if we have real results from backend
+          setIsAnalyzing(false);
+          const mockResults = {
+            confidence: Math.random() * 30 + 70,
+            isDeepfake: Math.random() > 0.7,
+            detectedTools: ['FaceSwap', 'DeepFaceLab'],
+            metadata: {
+              analysisTime: '2.3s',
+              modelVersion: 'v3.2.1 (Fallback Mode)',
+              fileSize: file.size,
+              resolution: fileType === 'image' ? '1920x1080' : undefined,
+              duration: fileType !== 'image' ? '00:00:45' : undefined,
+              note: 'Backend unavailable - using mock analysis. Start backend to use your trained model.',
+            },
+            heatmapData: generateMockHeatmap(),
+          };
+          setTimeout(() => onAnalysisComplete(mockResults), 1000);
+          return;
+        }
+
+        // Update current step
+        setCurrentStepIndex(currentStep);
+        setSteps(prevSteps => 
+          prevSteps.map((step, index) => ({
+            ...step,
+            status: index < currentStep ? 'completed' : index === currentStep ? 'active' : 'pending',
+            progress: index === currentStep ? 0 : index < currentStep ? 100 : 0
+          }))
+        );
+
+        // Simulate step progress
+        let stepProgress = 0;
+        const progressInterval = setInterval(() => {
+          stepProgress += Math.random() * 15;
+          if (stepProgress >= 100) {
+            stepProgress = 100;
+            clearInterval(progressInterval);
+            
+            // Complete current step
+            setSteps(prevSteps => 
+              prevSteps.map((step, index) => 
+                index === currentStep ? { ...step, progress: 100, status: 'completed' } : step
+              )
+            );
+            
+            // Update overall progress
+            const newOverallProgress = ((currentStep + 1) / steps.length) * 100;
+            setOverallProgress(newOverallProgress);
+            
+            // Move to next step
+            currentStep++;
+            setTimeout(processStep, 500);
+          } else {
+            // Update step progress
+            setSteps(prevSteps => 
+              prevSteps.map((step, index) => 
+                index === currentStep ? { ...step, progress: stepProgress } : step
+              )
+            );
+            
+            // Update overall progress
+            const newOverallProgress = ((currentStep + stepProgress / 100) / steps.length) * 100;
+            setOverallProgress(newOverallProgress);
+          }
+        }, 200);
+        
+      };
+      
+      // Start the first step after a brief delay
+      fallbackTimer = setTimeout(processStep, 500);
+    };
+
+    // Try real analysis first, then WebSocket, then fallback
+    tryRealAnalysis().then(() => {
+      if (realAnalysisStarted) {
+        connectWebSocket();
+      }
+    });
+    
+    // Fallback timer in case everything fails
+    const connectionTimeout = setTimeout(() => {
+      if (!hasConnected && !realAnalysisStarted) {
+        console.log('No backend connection, starting fallback...');
+        startFallbackAnalysis();
+      }
+    }, 2000);
+
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+      if (fallbackTimer) {
+        clearTimeout(fallbackTimer);
+      }
+      if (connectionTimeout) {
+        clearTimeout(connectionTimeout);
+      }
+    };
+  }, [isAnalyzing, file, steps.length, fileType, onAnalysisComplete]);
+
+  const generateMockHeatmap = (): Array<{ x: number; y: number; intensity: number }> => {
     // Generate mock heatmap data for visualization
-    const points = [];
+    const points: Array<{ x: number; y: number; intensity: number }> = [];
     for (let i = 0; i < 20; i++) {
       points.push({
         x: Math.random() * 100,
