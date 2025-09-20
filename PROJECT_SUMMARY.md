@@ -1,4 +1,4 @@
-# Dark-Nexis Project Summary
+Get-Process | Where-Object {$_.ProcessName -like "*git*"}# Dark-Nexis Project Summary
 
 ## Project Overview
 
