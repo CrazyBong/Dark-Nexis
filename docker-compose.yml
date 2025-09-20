@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # FastAPI backend service
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgresql://postgres:admin11@db:5432/darknexis
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - MODEL_PATH=/app/models/model.onnx
+      - S3_ENDPOINT=http://minio:9000
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_BUCKET=darknexis
+    depends_on:
+      - db
+      - redis
+      - minio
+    networks:
+      - darknexis-network
+
+  # Worker service for media analysis
+  worker:
+    build:
+      context: ./workers
+      dockerfile: Dockerfile
+    volumes:
+      - ./workers:/app/workers
+      - ./models:/app/models
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DATABASE_URL=postgresql://postgres:admin11@db:5432/darknexis
+      - MODEL_DIR=/app/models
+      - S3_ENDPOINT=http://minio:9000
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_BUCKET=darknexis
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - minio
+      - db
+    networks:
+      - darknexis-network
+
+  # PostgreSQL database
+  db:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin11
+      - POSTGRES_DB=darknexis
+    ports:
+      - "5432:5432"
+    networks:
+      - darknexis-network
+
+  # Redis for Celery broker
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - darknexis-network
+
+  # Minio for S3-compatible storage
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    networks:
+      - darknexis-network
+
+networks:
+  darknexis-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
