@@ -1,0 +1,326 @@
+[
+  {
+    "prediction": 1,
+    "label": "Fake",
+    "confidence": 0.9549303174018859,
+    "probabilities": {
+      "real": 0.0450696874409914,
+      "fake": 0.9549303174018859
+    },
+    "frame_count": 5,
+    "frame_predictions": [
+      {
+        "prediction": 1,
+        "confidence": 0.9728502035140991,
+        "probabilities": {
+          "real": 0.02714979089796543,
+          "fake": 0.9728502035140991
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9693354964256287,
+        "probabilities": {
+          "real": 0.030664518475532532,
+          "fake": 0.9693354964256287
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9796563386917114,
+        "probabilities": {
+          "real": 0.020343735814094543,
+          "fake": 0.9796563386917114
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9389330148696899,
+        "probabilities": {
+          "real": 0.06106697767972946,
+          "fake": 0.9389330148696899
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9138765335083008,
+        "probabilities": {
+          "real": 0.08612341433763504,
+          "fake": 0.9138765335083008
+        }
+      }
+    ],
+    "true_label": "Real",
+    "video_name": "000.mp4"
+  },
+  {
+    "prediction": 1,
+    "label": "Fake",
+    "confidence": 0.9832125782966614,
+    "probabilities": {
+      "real": 0.016787405498325823,
+      "fake": 0.9832125782966614
+    },
+    "frame_count": 5,
+    "frame_predictions": [
+      {
+        "prediction": 1,
+        "confidence": 0.9906104207038879,
+        "probabilities": {
+          "real": 0.009389559738337994,
+          "fake": 0.9906104207038879
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9854857921600342,
+        "probabilities": {
+          "real": 0.014514166861772537,
+          "fake": 0.9854857921600342
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9672448635101318,
+        "probabilities": {
+          "real": 0.03275509551167488,
+          "fake": 0.9672448635101318
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9869579672813416,
+        "probabilities": {
+          "real": 0.013042034581303596,
+          "fake": 0.9869579672813416
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9857638478279114,
+        "probabilities": {
+          "real": 0.014236170798540115,
+          "fake": 0.9857638478279114
+        }
+      }
+    ],
+    "true_label": "Real",
+    "video_name": "001.mp4"
+  },
+  {
+    "prediction": 1,
+    "label": "Fake",
+    "confidence": 0.99996018409729,
+    "probabilities": {
+      "real": 3.980476612923667e-05,
+      "fake": 0.99996018409729
+    },
+    "frame_count": 5,
+    "frame_predictions": [
+      {
+        "prediction": 1,
+        "confidence": 0.9999516010284424,
+        "probabilities": {
+          "real": 4.840820110985078e-05,
+          "fake": 0.9999516010284424
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9999518394470215,
+        "probabilities": {
+          "real": 4.818372326553799e-05,
+          "fake": 0.9999518394470215
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9999650716781616,
+        "probabilities": {
+          "real": 3.490085873636417e-05,
+          "fake": 0.9999650716781616
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9999672174453735,
+        "probabilities": {
+          "real": 3.272803587606177e-05,
+          "fake": 0.9999672174453735
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9999651908874512,
+        "probabilities": {
+          "real": 3.480301165836863e-05,
+          "fake": 0.9999651908874512
+        }
+      }
+    ],
+    "true_label": "Real",
+    "video_name": "002.mp4"
+  },
+  {
+    "prediction": 1,
+    "label": "Fake",
+    "confidence": 0.9940109252929688,
+    "probabilities": {
+      "real": 0.005989066790789366,
+      "fake": 0.9940109252929688
+    },
+    "frame_count": 5,
+    "frame_predictions": [
+      {
+        "prediction": 1,
+        "confidence": 0.9964918494224548,
+        "probabilities": {
+          "real": 0.0035081342794001102,
+          "fake": 0.9964918494224548
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9960111379623413,
+        "probabilities": {
+          "real": 0.003988827113062143,
+          "fake": 0.9960111379623413
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9966140389442444,
+        "probabilities": {
+          "real": 0.0033859675750136375,
+          "fake": 0.9966140389442444
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.994186282157898,
+        "probabilities": {
+          "real": 0.005813749972730875,
+          "fake": 0.994186282157898
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9867513179779053,
+        "probabilities": {
+          "real": 0.013248655013740063,
+          "fake": 0.9867513179779053
+        }
+      }
+    ],
+    "true_label": "Fake",
+    "video_name": "000_003.mp4"
+  },
+  {
+    "prediction": 1,
+    "label": "Fake",
+    "confidence": 0.923878812789917,
+    "probabilities": {
+      "real": 0.07612116932868958,
+      "fake": 0.923878812789917
+    },
+    "frame_count": 5,
+    "frame_predictions": [
+      {
+        "prediction": 1,
+        "confidence": 0.8663890361785889,
+        "probabilities": {
+          "real": 0.13361094892024994,
+          "fake": 0.8663890361785889
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9027660489082336,
+        "probabilities": {
+          "real": 0.09723388403654099,
+          "fake": 0.9027660489082336
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9127048254013062,
+        "probabilities": {
+          "real": 0.08729518949985504,
+          "fake": 0.9127048254013062
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9650719165802002,
+        "probabilities": {
+          "real": 0.034928105771541595,
+          "fake": 0.9650719165802002
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9724622368812561,
+        "probabilities": {
+          "real": 0.027537718415260315,
+          "fake": 0.9724622368812561
+        }
+      }
+    ],
+    "true_label": "Fake",
+    "video_name": "001_870.mp4"
+  },
+  {
+    "prediction": 1,
+    "label": "Fake",
+    "confidence": 0.9999778032302856,
+    "probabilities": {
+      "real": 2.218058580183424e-05,
+      "fake": 0.9999778032302856
+    },
+    "frame_count": 5,
+    "frame_predictions": [
+      {
+        "prediction": 1,
+        "confidence": 0.999977707862854,
+        "probabilities": {
+          "real": 2.2278665710473433e-05,
+          "fake": 0.999977707862854
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9999762773513794,
+        "probabilities": {
+          "real": 2.369902176724281e-05,
+          "fake": 0.9999762773513794
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9999834299087524,
+        "probabilities": {
+          "real": 1.6565763871767558e-05,
+          "fake": 0.9999834299087524
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9999783039093018,
+        "probabilities": {
+          "real": 2.1647216271958314e-05,
+          "fake": 0.9999783039093018
+        }
+      },
+      {
+        "prediction": 1,
+        "confidence": 0.9999732971191406,
+        "probabilities": {
+          "real": 2.6712261387729086e-05,
+          "fake": 0.9999732971191406
+        }
+      }
+    ],
+    "true_label": "Fake",
+    "video_name": "002_006.mp4"
+  }
+]
