@@ -31,3 +31,8 @@ tmp
 .DS_Store
 *.swp
 *.swo
+# Large model files
+*.pth
+*.pt
+*.h5
+*.keras
